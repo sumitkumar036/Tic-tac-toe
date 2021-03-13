@@ -10,6 +10,16 @@ public class GameManager : MonoBehaviour
     public int counter;
     public GameObject winPanal;
 
+    [Header("Player")]
+    public Player playerX;
+     public Player player0;
+
+    [Header("Player color")]
+    public PlayerColor playerActiveColor;
+    public PlayerColor playerInActiveColor;
+
+    public Text ActivePlayerName;
+
     void Awake()
     {
         for (int i = 0; i < buttonText.Count; i++)
@@ -66,7 +76,6 @@ public class GameManager : MonoBehaviour
     void GameOver()
     {
         SetButtonCondition(false);
-
         winPanal.SetActive(true);
         winPanal.GetComponentInChildren<Text>().text = playerString + " win";
     }
@@ -74,7 +83,15 @@ public class GameManager : MonoBehaviour
 
     void ChangeTurn()
     {
-        playerString = (playerString == "sumit") ? "0" : "sumit";
+        playerString = (playerString == "X") ? "0" : "X";
+
+        if(playerString.Equals("X"))
+            SetPlayerColor(playerX, player0);
+
+        else if(playerString.Equals("0"))
+             SetPlayerColor(player0, playerX);
+        
+        ActivePlayerName.text = playerString;
     }
 
     public void MatchDraw()
@@ -91,7 +108,11 @@ public class GameManager : MonoBehaviour
     {
         counter = 0;
         SetButtonCondition(true);
-
+        playerString = "X";
+        for (int i = 0; i < buttonText.Count; i++)
+        {
+            buttonText[i].text = null;
+        }
         winPanal.SetActive(false);
     }
 
@@ -104,4 +125,27 @@ public class GameManager : MonoBehaviour
         }
 
     }
+
+    public void SetPlayerColor(Player active, Player Inactive)
+    {
+        
+            active.BG.color = playerActiveColor.BgColor;
+            active.playerText.color = playerActiveColor.playerTextColor;
+
+            Inactive.BG.color = playerInActiveColor.BgColor;
+            Inactive.playerText.color = playerInActiveColor.playerTextColor;
+    }
+}
+
+[System.Serializable]
+public class Player{
+    public Image BG;
+    public Text playerText;
+}
+
+[System.Serializable]
+public class PlayerColor{
+    public Color BgColor;
+    public Color playerTextColor;
+
 }
