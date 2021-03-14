@@ -24,21 +24,41 @@ public class GameManager : MonoBehaviour
 
     public Text ActivePlayerName;
     public Button[] option;
-
+    bool IsGameOver = false;
 
    [Header("computer side")]
     public float delay;
     public int value;
   
+    [Header("Score Board")]
+    public Text PlayerName;
+    public Text scoreText;
+    public int playerScore, machineScore;
+
+    [Header("Win/Loose")]
+    public Text winLooseText;
+    public Text totalMatchText;
+    public int win, Loose;
+
+
+    [Header("Date & Time")]
+    public Text date;
+    public Text time;
+
 
     void Awake()
     {
        NameManagement.nameEntered += SetData;
+      date.text = "Date : "+ System.DateTime.Now.ToString("dd/MM/yyyy");
     }
 
+//=====================================================SetData()============================================================
+/// <summary>
+/// This is for setting required information on Awake
+/// </summary>
     public void SetData()
     {
-        ActivePlayerName.text = "select X or 0 to start";
+        ActivePlayerName.text = "Select X or 0 to start";
         SetButtonCondition(false);
         playerMove = true;
 
@@ -46,8 +66,17 @@ public class GameManager : MonoBehaviour
         {
             buttonText[i].GetComponentInParent<OptionManager>().GameManagerRef(this);
         }
+
+        PlayerName.text = PlayerPrefs.GetString("Name");
+
+        //score
+        playerScore = 0; machineScore = 0;
+        totalMatchText.text = "Total Match : " + "<color=green>"+ (win + Loose).ToString() +"</color>";
+        winLooseText.text = win.ToString() +"  /  " + Loose.ToString() +"\n\n" + Loose.ToString() +"  /  "+ win.ToString();
+        scoreText.text = playerScore.ToString() + "\n\n" + machineScore.ToString();
     }
 
+//=====================================================ChooseOption()============================================================
     /// <summary>
     /// This is for getting playerside string i.e which player is active
     /// </summary>
@@ -62,6 +91,7 @@ public class GameManager : MonoBehaviour
         return computerString;
     }
 
+//=====================================================Compeleted()============================================================
     /// <summary>
     /// This is for checking all the possibilities of win condition
     /// </summary>
@@ -136,10 +166,11 @@ public class GameManager : MonoBehaviour
             GameOver();
         }
         
-        //=================================================================================
-        MatchDraw();
-    }
 
+        MatchCondition();
+        SetScore();
+    }
+//============================================ Update() ====================================================
     void Update()
     {
         if(!playerMove)
@@ -152,52 +183,84 @@ public class GameManager : MonoBehaviour
                 {
                     buttonText[value].text = ComputerSide();
                     buttonText[value].GetComponentInParent<Button>().interactable = false;
-                   Compeleted();
+                    Compeleted();
                 }
             }
         }
+
+        time.text = "Time : "+  System.DateTime.Now.ToString("hh:mm:ss");
     }
 
+//============================================ SetScore() ====================================================
+    /// <summary>
+    /// This is for set the score of both player
+    /// </summary>
+    private void SetScore()
+    {
+        scoreText.text = playerScore.ToString() + "\n\n" + machineScore.ToString();
 
+        if(IsGameOver)
+        {
+           
+            if(playerScore > machineScore)
+            {
+                win +=1;
+                scoreText.text = "<color=green>"+ playerScore.ToString() + "</color>" + "\n\n" + machineScore.ToString();
+                winPanal.GetComponentInChildren<Text>().text = "Congratulation !!"+ "\n" + ""+PlayerPrefs.GetString("Name") + " You won the match !!";            
+            }
+            else
+            {
+                Loose +=1;
+                scoreText.text = "<color=red>"+ playerScore.ToString() + "</color>" + "\n\n " + machineScore.ToString();
+                winPanal.GetComponentInChildren<Text>().text = "Machine won the match";
+
+            }
+            winLooseText.text = win.ToString() +"  /  " + Loose.ToString() +"\n\n" + Loose.ToString() +"  /  "+ win.ToString();
+            totalMatchText.text = "Total Match :" + "<color=yellow>"+ (win + Loose).ToString() +"</color>";
+        }
+    }
+    
+//============================================ GameOver() ====================================================
     /// <summary>
     /// Tihs is for checking either game is draw, win or loss
     /// </summary>
     void GameOver()
     {
+        IsGameOver = true;
         SetButtonCondition(false);
         winPanal.SetActive(true);
-        winPanal.GetComponentInChildren<Text>().text = playerString + " win";
+     //   SetScore();
     }
 
+ //============================================ ChangeTurn() ====================================================
     /// <summary>
     /// This is for changing the side of player one after another
     /// </summary>
     void ChangeTurn()
     {
-       // playerString = (playerString == "X") ? "0" : "X";
         playerMove = (playerMove == true) ? false : true;
-
-       // if(playerString.Equals("X"))
        if(playerMove)
        {
             SetPlayerColor(playerX, player0, true);          
-         ActivePlayerName.text = playerString + " Turn";
+            ActivePlayerName.text = PlayerPrefs.GetString("Name") + " Turn";
+            machineScore += 1;
        }
 
         else
         {
-             SetPlayerColor(player0, playerX, true);
-        
-         ActivePlayerName.text = computerString + " Turn";
+            SetPlayerColor(player0, playerX, true);
+            ActivePlayerName.text = "Machine Turn";
+            playerScore +=1;
         }
-
     }
+
+    //============================================ MatchCondition() ====================================================
 
     /// <summary>
     /// This is for checking condition if game is draw
     /// </summary>
 
-    public void MatchDraw()
+    public void MatchCondition()
     {
         counter += 1;
         if (counter >= 9)
@@ -212,7 +275,7 @@ public class GameManager : MonoBehaviour
             delay = 10;
         }
     }
-
+    //============================================Retry()====================================================
     /// <summary>
     /// This is for resetting the gameplay
     /// </summary>
@@ -230,19 +293,29 @@ public class GameManager : MonoBehaviour
         winPanal.SetActive(false);
 
         SetPlayerColor(playerX, player0, false);
-        ActivePlayerName.text = playerString + " Turn";
+        ActivePlayerName.text = PlayerPrefs.GetString("Name") + " Turn";
 
         for (int i = 0; i < option.Length; i++){option[i].enabled = true;}
 
         delay = 10;
 
         playerMove = true;
+        IsGameOver = false;
+
+        playerScore = 0;
+        machineScore = 0;
+        scoreText.text = "<color=white>"+ playerScore.ToString() + "</color>" + "\n\n" + machineScore.ToString();
     }
 
-    public void StartGame(string playerOption)
+//============================================StartGame()========================================================
+/// <summary>
+/// his is for starting the game
+/// </summary>
+/// <param name="playerOption"></param>
+    private void StartGame(string playerOption)
     {
          playerString = playerOption;
-         ActivePlayerName.text = playerString + " Turn";
+         ActivePlayerName.text = PlayerPrefs.GetString("Name") + " Turn";
 
          SetButtonCondition(true);
 
@@ -261,10 +334,11 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < option.Length; i++){option[i].enabled = false;}
     }
 
+    //==============================================SetButtonCondition()===========================================
     /// <summary>
     /// This i for making the button active or Inactive based on the condition
     /// </summary>
-    /// <param name="state"></param>
+    /// <param name="state">set tru/false</param>
     void SetButtonCondition(bool state)
     {
         for (int i = 0; i < buttonText.Count; i++)
@@ -273,7 +347,7 @@ public class GameManager : MonoBehaviour
         }
 
     }
-
+//==============================================SetPlayerColor()==================================================
     /// <summary>
     /// This is for setting the player color
     /// </summary>

@@ -585,6 +585,9 @@
     <Reference Include="Unity.TextMeshPro.Editor">
         <HintPath>E:/Unity Projects/Tic tac toe/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.DeviceSimulator.Tests.Common">
+        <HintPath>E:/Unity Projects/Tic tac toe/Library/ScriptAssemblies/Unity.DeviceSimulator.Tests.Common.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.UI">
         <HintPath>E:/Unity Projects/Tic tac toe/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
     </Reference>
@@ -597,17 +600,14 @@
     <Reference Include="Unity.Rider.Editor">
         <HintPath>E:/Unity Projects/Tic tac toe/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.DeviceSimulator.Editor">
+        <HintPath>E:/Unity Projects/Tic tac toe/Library/ScriptAssemblies/Unity.DeviceSimulator.Editor.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.TextMeshPro">
         <HintPath>E:/Unity Projects/Tic tac toe/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.UI">
         <HintPath>E:/Unity Projects/Tic tac toe/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.DeviceSimulator.Tests.Common">
-        <HintPath>E:/Unity Projects/Tic tac toe/Library/ScriptAssemblies/Unity.DeviceSimulator.Tests.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.DeviceSimulator.Editor">
-        <HintPath>E:/Unity Projects/Tic tac toe/Library/ScriptAssemblies/Unity.DeviceSimulator.Editor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
