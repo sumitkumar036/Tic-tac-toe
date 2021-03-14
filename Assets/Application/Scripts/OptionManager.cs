@@ -8,6 +8,7 @@ public class OptionManager : MonoBehaviour
     public Button button;
     public Text buttonText;
     public GameManager gameManager;
+    
     void Start()
     {
         button.onClick.AddListener(delegate { SetValue(); });
@@ -21,9 +22,12 @@ public class OptionManager : MonoBehaviour
 
     public void SetValue()
     {
-        buttonText.text = gameManager.ChooseOption();
-        button.interactable = false;
-        gameManager.Compeleted();
+        if(gameManager.playerMove)
+        {
+            buttonText.text = gameManager.ChooseOption();
+            button.interactable = false;
+            gameManager.Compeleted();
+        }
     }
 
 

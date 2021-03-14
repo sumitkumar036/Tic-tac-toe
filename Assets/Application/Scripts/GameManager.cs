@@ -6,8 +6,12 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public List<Text> buttonText = new List<Text>();
-    private string playerString;
+    private string playerString,computerString;
     private int counter;
+
+    [Header("PlayerMove")]
+    public bool playerMove;
+
     public GameObject winPanal;
 
     [Header("Player")]
@@ -20,19 +24,28 @@ public class GameManager : MonoBehaviour
 
     public Text ActivePlayerName;
     public Button[] option;
+
+
+   [Header("computer side")]
+    public float delay;
+    public int value;
   
 
     void Awake()
     {
+       NameManagement.nameEntered += SetData;
+    }
+
+    public void SetData()
+    {
+        ActivePlayerName.text = "select X or 0 to start";
+        SetButtonCondition(false);
+        playerMove = true;
+
         for (int i = 0; i < buttonText.Count; i++)
         {
             buttonText[i].GetComponentInParent<OptionManager>().GameManagerRef(this);
         }
-    //    SetPlayerColor(playerX, player0);
-    //    playerString = "X";
-
-        ActivePlayerName.text = "select X or 0 to start";
-        SetButtonCondition(false);
     }
 
     /// <summary>
@@ -42,6 +55,11 @@ public class GameManager : MonoBehaviour
     public string ChooseOption()
     {
         return playerString;
+    }
+
+    public string ComputerSide()
+    {
+        return computerString;
     }
 
     /// <summary>
@@ -82,8 +100,62 @@ public class GameManager : MonoBehaviour
         {
             GameOver();
         }
-        ChangeTurn();
+
+        //=================================================================================
+
+        if (buttonText[0].text.Equals(computerString) && buttonText[1].text.Equals(computerString) && buttonText[2].text.Equals(computerString))
+        {
+            GameOver();
+        }
+
+        if (buttonText[0].text.Equals(computerString) && buttonText[4].text.Equals(computerString) && buttonText[8].text.Equals(computerString))
+        {
+            GameOver();
+        }
+
+        if (buttonText[0].text.Equals(computerString) && buttonText[3].text.Equals(computerString) && buttonText[6].text.Equals(computerString))
+        {
+            GameOver();
+        }
+        if (buttonText[1].text.Equals(computerString) && buttonText[4].text.Equals(computerString) && buttonText[7].text.Equals(computerString))
+        {
+            GameOver();
+        }
+        if (buttonText[2].text.Equals(computerString) && buttonText[5].text.Equals(computerString) && buttonText[8].text.Equals(computerString))
+        {
+            GameOver();
+        }
+
+        if (buttonText[3].text.Equals(computerString) && buttonText[4].text.Equals(computerString) && buttonText[5].text.Equals(computerString))
+        {
+            GameOver();
+        }
+
+        if (buttonText[6].text.Equals(computerString) && buttonText[7].text.Equals(computerString) && buttonText[8].text.Equals(computerString))
+        {
+            GameOver();
+        }
+        
+        //=================================================================================
         MatchDraw();
+    }
+
+    void Update()
+    {
+        if(!playerMove)
+        {
+            delay += delay * Time.deltaTime;
+            if(delay >= 100)
+            {
+                value = Random.Range(0, 8);
+                if(buttonText[value].GetComponentInParent<Button>().interactable)
+                {
+                    buttonText[value].text = ComputerSide();
+                    buttonText[value].GetComponentInParent<Button>().interactable = false;
+                   Compeleted();
+                }
+            }
+        }
     }
 
 
@@ -102,15 +174,23 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void ChangeTurn()
     {
-        playerString = (playerString == "X") ? "0" : "X";
+       // playerString = (playerString == "X") ? "0" : "X";
+        playerMove = (playerMove == true) ? false : true;
 
-        if(playerString.Equals("X"))
-            SetPlayerColor(playerX, player0, true);
+       // if(playerString.Equals("X"))
+       if(playerMove)
+       {
+            SetPlayerColor(playerX, player0, true);          
+         ActivePlayerName.text = playerString + " Turn";
+       }
 
-        else if(playerString.Equals("0"))
+        else
+        {
              SetPlayerColor(player0, playerX, true);
         
-         ActivePlayerName.text = playerString + " Turn";
+         ActivePlayerName.text = computerString + " Turn";
+        }
+
     }
 
     /// <summary>
@@ -125,6 +205,12 @@ public class GameManager : MonoBehaviour
             winPanal.SetActive(true);
             winPanal.GetComponentInChildren<Text>().text = "It's draw, play again";
         }
+
+        else
+        {
+            ChangeTurn();
+            delay = 10;
+        }
     }
 
     /// <summary>
@@ -135,16 +221,22 @@ public class GameManager : MonoBehaviour
         counter = 0;
         SetButtonCondition(false);
         playerString = "X";
+
         for (int i = 0; i < buttonText.Count; i++)
         {
             buttonText[i].text = null;
         }
+
         winPanal.SetActive(false);
 
         SetPlayerColor(playerX, player0, false);
         ActivePlayerName.text = playerString + " Turn";
 
         for (int i = 0; i < option.Length; i++){option[i].enabled = true;}
+
+        delay = 10;
+
+        playerMove = true;
     }
 
     public void StartGame(string playerOption)
@@ -155,10 +247,16 @@ public class GameManager : MonoBehaviour
          SetButtonCondition(true);
 
         if(playerString.Equals("X"))
+        {
          SetPlayerColor(playerX, player0, true);
+            computerString = "0";
+        }
 
-             if(playerString.Equals("0"))
-         SetPlayerColor(player0, playerX, true);
+        if(playerString.Equals("0"))
+        {
+            SetPlayerColor(player0, playerX, true);
+            computerString = "X";
+        }
 
         for (int i = 0; i < option.Length; i++){option[i].enabled = false;}
     }
