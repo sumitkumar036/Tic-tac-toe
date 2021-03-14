@@ -33,24 +33,31 @@ public class GameManager : MonoBehaviour
     [Header("Score Board")]
     public Text PlayerName;
     public Text scoreText;
-    public int playerScore, machineScore;
+    private int playerScore, machineScore;
 
     [Header("Win/Loose")]
-    public Text winLooseText;
+    public Text winlooseText;
     public Text totalMatchText;
-    public int win, Loose;
+    private int win, loose;
 
 
     [Header("Date & Time")]
     public Text date;
     public Text time;
 
+    [Header("History")]
+    public History historyObject;
+    public InstantiateHistory instantiateHistory;
+
 
     void Awake()
     {
        NameManagement.nameEntered += SetData;
+       NameManagement.nameEntered += Retry;
       date.text = "Date : "+ System.DateTime.Now.ToString("dd/MM/yyyy");
     }
+
+
 
 //=====================================================SetData()============================================================
 /// <summary>
@@ -71,8 +78,8 @@ public class GameManager : MonoBehaviour
 
         //score
         playerScore = 0; machineScore = 0;
-        totalMatchText.text = "Total Match : " + "<color=green>"+ (win + Loose).ToString() +"</color>";
-        winLooseText.text = win.ToString() +"  /  " + Loose.ToString() +"\n\n" + Loose.ToString() +"  /  "+ win.ToString();
+        totalMatchText.text = "Total Match : " + "<color=yellow>"+ (win + loose).ToString() +"</color>";
+        winlooseText.text = win.ToString() +"  /  " + loose.ToString() +"\n\n" + loose.ToString() +"  /  "+ win.ToString();
         scoreText.text = playerScore.ToString() + "\n\n" + machineScore.ToString();
     }
 
@@ -207,29 +214,53 @@ public class GameManager : MonoBehaviour
                 win +=1;
                 scoreText.text = "<color=green>"+ playerScore.ToString() + "</color>" + "\n\n" + machineScore.ToString();
                 winPanal.GetComponentInChildren<Text>().text = "Congratulation !!"+ "\n" + ""+PlayerPrefs.GetString("Name") + " You won the match !!";            
+                SetHistoryData("Win", "loose", false);
             }
             else
             {
-                Loose +=1;
+                loose +=1;
                 scoreText.text = "<color=red>"+ playerScore.ToString() + "</color>" + "\n\n " + machineScore.ToString();
                 winPanal.GetComponentInChildren<Text>().text = "Machine won the match";
+                SetHistoryData("loose", "Win", false);
 
             }
-            winLooseText.text = win.ToString() +"  /  " + Loose.ToString() +"\n\n" + Loose.ToString() +"  /  "+ win.ToString();
-            totalMatchText.text = "Total Match :" + "<color=yellow>"+ (win + Loose).ToString() +"</color>";
+            winlooseText.text = win.ToString() +"  /  " + loose.ToString() +"\n\n" + loose.ToString() +"  /  "+ win.ToString();
+            totalMatchText.text = "Total Match : " + "<color=yellow>"+ (win + loose).ToString() +"</color>";
         }
     }
     
-//============================================ GameOver() ====================================================
+    //============================================ GameOver() ====================================================
     /// <summary>
     /// Tihs is for checking either game is draw, win or loss
     /// </summary>
     void GameOver()
     {
+        instantiateHistory.InstantiateList();
         IsGameOver = true;
         SetButtonCondition(false);
         winPanal.SetActive(true);
-     //   SetScore();
+   
+    }
+ //============================================ SetHistory() ====================================================
+ /// <summary>
+ /// This is for storing tha data
+ /// </summary>
+ /// <param name="player">player status win/loose</param>
+ /// <param name="machine">machine status win/loose</param>
+    public void SetHistoryData(string player, string machine, bool draw)
+    {
+        historyObject.playerNameText.text = PlayerPrefs.GetString("Name");
+        historyObject.scoreText.text = "Score "+ "\n\n "+ playerScore.ToString() +"\n\n"+ machineScore.ToString();
+        historyObject.statusText.text = "Status "+ "\n\n " +player + "\n\n" + machine;
+        if(draw)
+            historyObject.matchNumberText.text = "Match Number "+ "\n\n " + (win + loose + 1).ToString();
+        else
+        {
+             historyObject.matchNumberText.text = "Match Number "+ "\n\n " + (win + loose).ToString();
+        }
+        historyObject.timeText.text = "Time "+ "\n\n " + System.DateTime.Now.ToString("hh:mm:ss");
+
+        Debug.Log("History Data created");
     }
 
  //============================================ ChangeTurn() ====================================================
@@ -267,6 +298,8 @@ public class GameManager : MonoBehaviour
         {
             winPanal.SetActive(true);
             winPanal.GetComponentInChildren<Text>().text = "It's draw, play again";
+            totalMatchText.text = "Total Match : " + "<color=yellow>"+ (win + loose + 1).ToString() +"</color>";
+            SetHistoryData("Draw", "Draw", true);
         }
 
         else
@@ -368,6 +401,12 @@ public class GameManager : MonoBehaviour
         }
         Inactive.BG.color = playerInActiveColor.BgColor;
         Inactive.playerText.color = playerInActiveColor.playerTextColor;
+    }
+
+    void OnDisable()
+    {
+        NameManagement.nameEntered -= SetData;
+       NameManagement.nameEntered -= Retry;
     }
 }
 
