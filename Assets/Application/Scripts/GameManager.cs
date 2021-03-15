@@ -88,7 +88,7 @@ public class GameManager : MonoBehaviour
 
         //score
         playerScore = 0; machineScore = 0;
-        totalMatchText.text = "Total Match : " + "<color=yellow>"+ (win + loose).ToString() +"</color>";
+        totalMatchText.text = "Total Match : " + "<color=yellow>"+ totalMatchPlayed.ToString() +"</color>";
         winlooseText.text = win.ToString() +"  /  " + loose.ToString() +"\n\n" + loose.ToString() +"  /  "+ win.ToString();
         scoreText.text = playerScore.ToString() + "\n\n" + machineScore.ToString();
 
@@ -117,7 +117,6 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void Compeleted()
     {
-
         if (buttonText[0].text.Equals(playerString) && buttonText[1].text.Equals(playerString) && buttonText[2].text.Equals(playerString))
         {
             GameOver("player");
@@ -186,9 +185,8 @@ public class GameManager : MonoBehaviour
             GameOver("Machine");
         }
         
-
-        MatchCondition();
         SetScore();
+        MatchCondition();
     }
 //============================================ Update() ====================================================
     void Update()
@@ -207,9 +205,6 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-
-       //time.text = "Time : "+  System.DateTime.Now.ToString("hh:mm:ss");
-
 
         if(startTimer && !IsGameOver)
         {
@@ -241,7 +236,7 @@ public class GameManager : MonoBehaviour
         if(IsGameOver)
         {
            totalMatchPlayed+=1;
-
+           
             if(Matchwinner.Equals("player"))
             {
                 win +=1;
@@ -251,7 +246,7 @@ public class GameManager : MonoBehaviour
                 Debug.Log(Matchwinner);
             }
 
-           else if(Matchwinner.Equals("Machine"))
+           if(Matchwinner.Equals("Machine"))
             {
 
                 loose +=1;
@@ -260,6 +255,13 @@ public class GameManager : MonoBehaviour
                 SetHistoryData("<color=red>loose</color>", "Win");
                 Debug.Log(Matchwinner);
 
+            }
+
+            if(Matchwinner.Equals(""))
+            {
+                scoreText.text = "<color=red>"+ playerScore.ToString() + "</color>" + "\n\n " + machineScore.ToString();
+                winPanal.GetComponentInChildren<Text>().text = "It's draw, try again";
+                SetHistoryData("<color=yellow>Draw</color>", "<color=yellow>Draw</color>");
             }
 
             winlooseText.text = win.ToString() +"  /  " + loose.ToString() +"\n\n" + loose.ToString() +"  /  "+ win.ToString();
@@ -276,10 +278,11 @@ public class GameManager : MonoBehaviour
         IsGameOver = true;
         SetButtonCondition(false);
         winPanal.SetActive(true);
+
         instantiateHistory.historyObject.gameObject.name = totalMatchPlayed.ToString();
+
         startTimer = false;
         Matchwinner = winner;
-        instantiateHistory.InstantiateList();
     }
  //============================================ SetHistory() ====================================================
  /// <summary>
@@ -291,9 +294,7 @@ public class GameManager : MonoBehaviour
     {
         historyObject.playerNameText.text = PlayerPrefs.GetString("Name");
         historyObject.scoreText.text = "Score "+ "\n\n "+ playerScore.ToString() +"\n\n"+ machineScore.ToString();
-
         historyObject.statusText.text = "Status "+ "\n\n " + player + "\n\n" + machine;
-
         historyObject.matchNumberText.text = "Match Number "+ "\n\n " + totalMatchPlayed.ToString();
 
        if((int)timer >= divider)
@@ -306,6 +307,9 @@ public class GameManager : MonoBehaviour
        {
             historyObject.timeText.text = "Time "+ "\n\n " + "00" +" : "+ ((int)timer).ToString();
        }
+
+
+        instantiateHistory.InstantiateList();
     }
 
  //============================================ ChangeTurn() ====================================================
@@ -341,16 +345,9 @@ public class GameManager : MonoBehaviour
         counter += 1;
         if (counter >= 9)
         {
-            totalMatchPlayed += 1;
             winPanal.SetActive(true);
-            winPanal.GetComponentInChildren<Text>().text = "It's draw, play again";
-            totalMatchText.text = "Total Match : " + "<color=yellow>"+ totalMatchPlayed.ToString() +"</color>";
-
-         
-            if(!Matchwinner.Equals("player") || !Matchwinner.Equals("Machine"))
-                SetHistoryData("<color=yellow>Draw</color>", "<color=yellow>Draw</color>");
-
-            instantiateHistory.InstantiateList();
+        //    if(!Matchwinner.Equals("player") || !Matchwinner.Equals("Machine"))
+          //   winPanal.GetComponentInChildren<Text>().text = "It's draw, play again";
         }
 
         else
@@ -381,7 +378,7 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < option.Length; i++){option[i].enabled = true;}
 
-        delay = 10;
+        delay = 1;
 
         playerMove = true;
         IsGameOver = false;
@@ -393,6 +390,8 @@ public class GameManager : MonoBehaviour
         timer = 0;
 
         ActivePlayerName.text = "Select X or 0 to start";
+
+         Matchwinner = null;
     }
 
 //============================================StartGame()========================================================

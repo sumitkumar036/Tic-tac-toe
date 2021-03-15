@@ -22,6 +22,7 @@ public class NameManagement : MonoBehaviour
 
     public void SetName(InputField nameField)
     {
+        PlayerPrefs.DeleteAll();
         if(string.IsNullOrEmpty(nameField.text)){
             errorText.text = "Namefield can't be empty";
         }
