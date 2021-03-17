@@ -92,11 +92,10 @@ public class GameManager : MonoBehaviour
         winlooseText.text = win.ToString() +"  /  " + loose.ToString() +"\n\n" + loose.ToString() +"  /  "+ win.ToString();
         scoreText.text = playerScore.ToString() + "\n\n" + machineScore.ToString();
 
-
         time.text = "Timer 00 : 00";
     }
 
-//=====================================================ChooseOption()============================================================
+    //=====================================================ChooseOption()============================================================
     /// <summary>
     /// This is for getting playerside string i.e which player is active
     /// </summary>
@@ -111,7 +110,7 @@ public class GameManager : MonoBehaviour
         return computerString;
     }
 
-//=====================================================Compeleted()============================================================
+    //=====================================================Compeleted()============================================================
     /// <summary>
     /// This is for checking all the possibilities of win condition
     /// </summary>
@@ -284,12 +283,12 @@ public class GameManager : MonoBehaviour
         startTimer = false;
         Matchwinner = winner;
     }
- //============================================ SetHistory() ====================================================
- /// <summary>
- /// This is for storing tha data
- /// </summary>
- /// <param name="player">player status win/loose</param>
- /// <param name="machine">machine status win/loose</param>
+    //============================================ SetHistory() ====================================================
+    /// <summary>
+    /// This is for storing tha data
+    /// </summary>
+    /// <param name="player">player status win/loose</param>
+    /// <param name="machine">machine status win/loose</param>
     public void SetHistoryData(string player, string machine)
     {
         historyObject.playerNameText.text = PlayerPrefs.GetString("Name");
@@ -312,7 +311,7 @@ public class GameManager : MonoBehaviour
         instantiateHistory.InstantiateList();
     }
 
- //============================================ ChangeTurn() ====================================================
+    //============================================ ChangeTurn() ====================================================
     /// <summary>
     /// This is for changing the side of player one after another
     /// </summary>
@@ -335,7 +334,6 @@ public class GameManager : MonoBehaviour
     }
 
     //============================================ MatchCondition() ====================================================
-
     /// <summary>
     /// This is for checking condition if game is draw
     /// </summary>
@@ -356,6 +354,7 @@ public class GameManager : MonoBehaviour
             delay = 10;
         }
     }
+
     //============================================Retry()====================================================
     /// <summary>
     /// This is for resetting the gameplay
@@ -394,11 +393,11 @@ public class GameManager : MonoBehaviour
          Matchwinner = null;
     }
 
-//============================================StartGame()========================================================
-/// <summary>
-/// his is for starting the game
-/// </summary>
-/// <param name="playerOption"></param>
+    //============================================StartGame()========================================================
+    /// <summary>
+    /// his is for starting the game
+    /// </summary>
+    /// <param name="playerOption"></param>
     private void StartGame(string playerOption)
     {
          playerString = playerOption;
@@ -436,7 +435,8 @@ public class GameManager : MonoBehaviour
         }
 
     }
-//==============================================SetPlayerColor()==================================================
+    
+   //==============================================SetPlayerColor()==================================================
     /// <summary>
     /// This is for setting the player color
     /// </summary>
